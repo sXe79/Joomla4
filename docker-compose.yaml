@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+
+  joomla:
+    depends_on:
+      - db
+    image: ${APP_IMAGE}:${APP_TAG}
+    container_name: ${PROJECT_NAME}-app
+    volumes:
+      # Images
+      - "./app/images:/var/www/html/images"
+      # Libraries
+      - "./app/libraries:/var/www/html/libraries"
+      # Components
+      - "./app/components:/var/www/html/components"
+      # Modules
+      - "./app/modules:/var/www/html/modules"
+      # Plugins
+      - "./app/plugins:/var/www/html/plugins"
+      # Templates
+      - "./app/templates:/var/www/html/templates"
+    links:
+      - db:mysql
+    environment:
+      JOOMLA_DB_HOST: db:3306
+      JOOMLA_DB_USER: ${APP_DB_USER}
+      JOOMLA_DB_PASSWORD: ${APP_DB_PASSWORD}
+      JOOMLA_DB_NAME: ${APP_DB_NAME}
+    ports:
+      - 8010:80
+
+  db:
+    image: mysql:${MYSQL_TAG}
+    container_name: ${PROJECT_NAME}-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
+      MYSQL_USER: ${MYSQL_DB_USER}
+      MYSQL_PASSWORD: ${MYSQL_DB_PASSWORD}
+    ports:
+      - 3310:3306
